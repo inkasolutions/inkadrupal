@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * Contains classy_paragraphs.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\field\FieldConfigInterface;
+use Drupal\Core\Template\Attribute;
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function classy_paragraphs_preprocess_paragraph(&$variables) {
+  //@TODO Implement as service.
+  /** @var \Drupal\paragraphs\Entity\Paragraph $paragraph */
+  $paragraph = $variables['paragraph'];
+  $variables['attributes'] = new Attribute();
+
+  // Find fields which are referencing classy_paragraphs.
+  $class_fields = [];
+  $fields = $paragraph->getFieldDefinitions();
+  foreach($fields as $field) {
+    if ($field instanceof FieldConfigInterface) {
+      /** @var Drupal\field\Entity\FieldStorageConfig $field_storage */
+      $field_storage = $field->getFieldStorageDefinition();
+
+      $target = $field_storage->getSetting('target_type');
+      if ($target == 'classy_paragraphs_style') {
+        $class_fields[] = $field;
+      }
+    }
+  }
+
+  foreach($class_fields as $class_field) {
+    $field_name = $class_field->get('field_name');
+    if (!$paragraph->get($field_name)->isEmpty()) {
+
+      $field = $paragraph->get($field_name);
+      $classes = $field->referencedEntities();
+
+      foreach($classes as $class) {
+        $raw_classes = $class->getClasses();
+        $array_classes = explode("\r\n", $raw_classes);
+        if (!empty($array_classes)) {
+          $variables['attributes']->addClass($array_classes);
+        }
+      }
+    }
+  }
+}
