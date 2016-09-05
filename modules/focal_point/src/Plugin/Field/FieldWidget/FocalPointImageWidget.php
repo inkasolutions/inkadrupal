@@ -19,8 +19,10 @@ use Drupal\Core\Url;
  */
 class FocalPointImageWidget extends ImageWidget {
 
+  const PREVIEW_TOKEN_NAME = 'focal_point_preview';
+
   /**
-   * {@inheritDocs}
+   * {@inheritdoc}
    *
    * Form API callback: Processes an image_fp field element.
    *
@@ -39,10 +41,6 @@ class FocalPointImageWidget extends ImageWidget {
 
     // Add the focal point indicator to preview.
     if (isset($element['preview'])) {
-      // Even for image fields with a cardinality higher than 1 the correct fid
-      // can always be found in $item['fids'][0].
-      $fid = $item['fids'][0];
-
       $indicator = array(
         '#theme_wrappers' => array('container'),
         '#attributes' => array(
@@ -59,20 +57,33 @@ class FocalPointImageWidget extends ImageWidget {
       );
 
       $display_preview_link = \Drupal::config('focal_point.preview')->get('display_link');
-      if ($display_preview_link) {
+
+      // Even for image fields with a cardinality higher than 1 the correct fid
+      // can always be found in $item['fids'][0].
+      $fid = isset($item['fids'][0]) ? $item['fids'][0] : '';
+      if ($display_preview_link && !empty($fid)) {
+        // Replace comma (,) with an x to make javascript handling easier.
         $preview_focal_point_value = str_replace(',', 'x', $default_focal_point_value);
+
+        // Create a token to be used during an access check on the preview page.
+        $token = self::getPreviewToken();
+
         $preview_link = [
           '#type' => 'link',
           '#title' => t('Preview'),
-          '#url' => new Url('focal_point.preview', [
-            'fid' => $fid,
-            'focal_point_value' => $preview_focal_point_value
-          ]),
+          '#url' => new Url('focal_point.preview',
+            [
+              'fid' => $fid,
+              'focal_point_value' => $preview_focal_point_value,
+            ],
+            [
+              'query' => array('focal_point_token' => $token),
+            ]),
           '#attributes' => [
             'class' => array('focal-point-preview-link'),
             'data-selector' => $element_selector,
             'data-field-name' => $element['#field_name'],
-            'target' => '_blank'
+            'target' => '_blank',
           ],
         ];
 
@@ -109,13 +120,13 @@ class FocalPointImageWidget extends ImageWidget {
   }
 
   /**
-   * {@inheritDocs}
+   * {@inheritdoc}
    *
    * Form API callback. Retrieves the value for the file_generic field element.
    *
    * This method is assigned as a #value_callback in formElement() method.
    */
-  public static function value($element, $input = FALSE, FormStateInterface $form_state) {
+  public static function value($element, $input, FormStateInterface $form_state) {
     $return = parent::value($element, $input, $form_state);
 
     // When an element is loaded, focal_point needs to be set. During a form
@@ -137,14 +148,42 @@ class FocalPointImageWidget extends ImageWidget {
   }
 
   /**
-   * {@inheritDocs}
+   * {@inheritdoc}
    *
    * Validate callback for the focal point field.
    */
   public static function validateFocalPoint($element, FormStateInterface $form_state) {
-    if (empty($element['#value']) || (FALSE === \Drupal::service('focal_point.manager')->validateFocalPoint($element['#value'])))  {
-      $form_state->setError($element, new TranslatableMarkup('The @title field should be in the form "leftoffset,topoffset" where offsets are in percents. Ex: 25,75.', array('@title' => $element['#title'])));
+    if (empty($element['#value']) || (FALSE === \Drupal::service('focal_point.manager')->validateFocalPoint($element['#value']))) {
+      $replacements = ['@title' => strtolower($element['#title'])];
+      $form_state->setError($element, new TranslatableMarkup('The @title field should be in the form "leftoffset,topoffset" where offsets are in percentages. Ex: 25,75.', $replacements));
     }
+  }
+
+  /**
+   * Create and return a token to use for accessing the preview page.
+   *
+   * @return string
+   *   A valid token.
+   *
+   * @codeCoverageIgnore
+   */
+  public static function getPreviewToken() {
+    return \Drupal::csrfToken()->get(self::PREVIEW_TOKEN_NAME);
+  }
+
+  /**
+   * Validate a preview token.
+   *
+   * @param string $token
+   *   A drupal generated token.
+   *
+   * @return bool
+   *   True if the token is valid.
+   *
+   * @codeCoverageIgnore
+   */
+  public static function validatePreviewToken($token) {
+    return \Drupal::csrfToken()->validate($token, self::PREVIEW_TOKEN_NAME);
   }
 
 }
