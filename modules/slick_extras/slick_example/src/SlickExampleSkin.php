@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\slick_example\SlickExampleSkin.
- */
-
 namespace Drupal\slick_example;
 
 use Drupal\slick\SlickSkinInterface;
@@ -23,6 +18,7 @@ class SlickExampleSkin implements SlickSkinInterface {
       'x_testimonial' => [
         'name' => t('X: Testimonial'),
         'description' => t('Testimonial with thumbnail and description with slidesToShow 2.'),
+        'group' => 'main',
         'provider' => 'slick_example',
         'css' => [
           'theme' => [

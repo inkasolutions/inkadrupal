@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\slick_devel\SlickDevelSettingsForm.
- */
-
 namespace Drupal\slick_devel;
 
+use Drupal\Core\Url;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -38,7 +34,7 @@ class SlickDevelSettingsForm extends ConfigFormBase {
     $form['slick_devel'] = array(
       '#type' => 'details',
       '#title' => 'Slick development',
-      '#description' => $this->t("Unless you are helping to develop the Slick module, all these are not needed to run Slick. Requires slick > 1.4."),
+      '#description' => $this->t("Unless you are helping to develop the Slick module, all these are not needed to run Slick. Requires slick > 1.6.0"),
       '#open' => TRUE,
       '#collapsible' => FALSE,
     );
@@ -89,12 +85,17 @@ class SlickDevelSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    $this->config('slick_devel.settings')
+    $this->configFactory->getEditable('slick_devel.settings')
       ->set('unminified', $form_state->getValue('unminified'))
       ->set('debug', $form_state->getValue('debug'))
       ->set('replace', $form_state->getValue('replace'))
       ->set('disable', $form_state->getValue('disable'))
       ->save();
+
+    // Invalidate the library discovery cache to update the responsive image.
+    \Drupal::service('library.discovery')->clearCachedDefinitions();
+
+    drupal_set_message($this->t('Be sure to <a href=":clear_cache">clear the cache</a> if trouble to see the updated settings', [':clear_cache' => Url::fromRoute('system.performance_settings')->toString()]));
 
     parent::submitForm($form, $form_state);
   }
