@@ -1,4 +1,15 @@
 
+Slick extras 8.x-1.0-dev, 2016-09-07
+------------------------------------
+- Marked it Beta 3.
+- Added group main for sample skin X: Testimonial to decultter other skins.
+
+Slick extras 8.x-1.0-dev, 2016-07-18
+------------------------------------
+- #2759639 by Sonal.Sangale: Remove @file tag docblock from all the .php files.
+- Updated to reflect Slick 8.x-1.0-beta2.
+- A few cleanups.
+
 Slick extras 8.x-1.0-dev, 2016-04-11
 ------------------------------------
 - Updated to reflect Slick 8.x-1.0-beta1.

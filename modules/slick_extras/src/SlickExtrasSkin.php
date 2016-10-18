@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\slick_extras\SlickExtrasSkin.
- */
-
 namespace Drupal\slick_extras;
 
 use Drupal\slick\SlickSkinInterface;
