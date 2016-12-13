@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\classy_paragraphs\Entity\ClassyParagraphsStyle.
- */
-
 namespace Drupal\classy_paragraphs\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;

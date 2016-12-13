@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\classy_paragraphs\Form\ClassyParagraphsStyleDeleteForm.
- */
-
 namespace Drupal\classy_paragraphs\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
