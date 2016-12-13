@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\classy_paragraphs\Tests\ClassyParagraphsTest.php.
- */
 
 namespace Drupal\classy_paragraphs\Tests;
 

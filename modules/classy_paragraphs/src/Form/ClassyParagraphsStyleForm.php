@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\classy_paragraphs\Form\ClassyParagraphsStyleForm.
- */
-
 namespace Drupal\classy_paragraphs\Form;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -73,7 +68,7 @@ class ClassyParagraphsStyleForm extends EntityForm {
           '%label' => $style->label(),
         ]));
     }
-    $form_state->setRedirectUrl($style->urlInfo('collection'));
+    $form_state->setRedirectUrl($style->toUrl('collection'));
   }
 
 }

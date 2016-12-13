@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\classy_paragraphs\ClassyParagraphsStyleListBuilder.
- */
-
 namespace Drupal\classy_paragraphs;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
