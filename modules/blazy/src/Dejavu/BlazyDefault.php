@@ -12,7 +12,7 @@ class BlazyDefault {
   /**
    * The supported $breakpoints.
    *
-   * @const $breakpoints.
+   * @var array
    */
   private static $breakpoints = ['xs', 'sm', 'md', 'lg', 'xl'];
 
@@ -62,18 +62,25 @@ class BlazyDefault {
   }
 
   /**
+   * Returns Views specific settings.
+   */
+  public static function viewsSettings() {
+    return [
+      'class'   => '',
+      'id'      => '',
+      'image'   => '',
+      'link'    => '',
+      'overlay' => '',
+      'title'   => '',
+      'vanilla' => FALSE,
+    ];
+  }
+
+  /**
    * Returns fieldable entity formatter and Views settings.
    */
   public static function extendedSettings() {
-    return [
-      'class'       => '',
-      'id'          => '',
-      'image'       => '',
-      'link'        => '',
-      'overlay'     => '',
-      'title'       => '',
-      'vanilla'     => FALSE,
-    ] + self::imageSettings();
+    return self::viewsSettings() + self::imageSettings();
   }
 
   /**
